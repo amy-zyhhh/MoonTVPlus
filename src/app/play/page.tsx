@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { usePlaySync } from '@/hooks/usePlaySync';
-
+import { getDoubanDetail } from '@/lib/douban.client';
 
 import {
   deleteFavorite,
@@ -311,6 +311,12 @@ function PlayPageClient() {
   const [videoYear, setVideoYear] = useState(searchParams.get('year') || '');
   const [videoCover, setVideoCover] = useState('');
   const [videoDoubanId, setVideoDoubanId] = useState(0);
+  // 豆瓣评分数据
+  const [doubanRating, setDoubanRating] = useState<{
+    value: number;
+    count: number;
+    star_count: number;
+  } | null>(null);
   // 当前源和ID
   const [currentSource, setCurrentSource] = useState(
     searchParams.get('source') || ''
@@ -400,6 +406,34 @@ function PlayPageClient() {
       }
     }
   }, [currentEpisodeIndex]);
+
+  // 获取豆瓣评分数据
+  useEffect(() => {
+    const fetchDoubanRating = async () => {
+      if (!videoDoubanId || videoDoubanId === 0) {
+        setDoubanRating(null);
+        return;
+      }
+
+      try {
+        const doubanData = await getDoubanDetail(videoDoubanId.toString());
+        if (doubanData.rating) {
+          setDoubanRating({
+            value: doubanData.rating.value,
+            count: doubanData.rating.count,
+            star_count: doubanData.rating.star_count,
+          });
+        } else {
+          setDoubanRating(null);
+        }
+      } catch (error) {
+        console.error('获取豆瓣评分失败:', error);
+        setDoubanRating(null);
+      }
+    };
+
+    fetchDoubanRating();
+  }, [videoDoubanId]);
 
 
   // 视频播放地址
@@ -3836,17 +3870,50 @@ function PlayPageClient() {
           <div className='md:col-span-3'>
             <div className='p-6 flex flex-col min-h-0'>
               {/* 标题 */}
-              <h1 className='text-3xl font-bold mb-2 tracking-wide flex items-center flex-shrink-0 text-center md:text-left w-full'>
-                {videoTitle || '影片标题'}
+              <h1 className='text-3xl font-bold mb-2 tracking-wide flex items-center flex-shrink-0 text-center md:text-left w-full flex-wrap gap-2'>
+                <span>{videoTitle || '影片标题'}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleFavorite();
                   }}
-                  className='ml-3 flex-shrink-0 hover:opacity-80 transition-opacity'
+                  className='flex-shrink-0 hover:opacity-80 transition-opacity'
                 >
                   <FavoriteIcon filled={favorited} />
                 </button>
+                {/* 豆瓣评分显示 */}
+                {doubanRating && doubanRating.value > 0 && (
+                  <div className='flex items-center gap-2 text-base font-normal'>
+                    {/* 星级显示 */}
+                    <div className='flex items-center gap-1'>
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const filled = star <= Math.round(doubanRating.value / 2);
+                        return (
+                          <svg
+                            key={star}
+                            className={`w-5 h-5 ${
+                              filled
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-gray-300 dark:text-gray-600 fill-gray-300 dark:fill-gray-600'
+                            }`}
+                            viewBox='0 0 24 24'
+                            xmlns='http://www.w3.org/2000/svg'
+                          >
+                            <path d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' />
+                          </svg>
+                        );
+                      })}
+                    </div>
+                    {/* 评分数值 */}
+                    <span className='text-gray-700 dark:text-gray-300 font-semibold'>
+                      {doubanRating.value.toFixed(1)}
+                    </span>
+                    {/* 评分人数 */}
+                    <span className='text-gray-500 dark:text-gray-400 text-sm'>
+                      ({doubanRating.count.toLocaleString()}人评价)
+                    </span>
+                  </div>
+                )}
               </h1>
 
               {/* 关键信息行 */}
