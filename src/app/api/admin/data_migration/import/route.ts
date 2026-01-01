@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
 
       // 为所有有passwordV2的用户创建user:info
       if (user.passwordV2) {
-        const userV2 = usersV2Map.get(username);
+        const userV2 = usersV2Map.get(username) as any;
 
         // 确定角色：站长为owner，其他用户从usersV2获取或默认为user
         let role: 'owner' | 'admin' | 'user' = 'user';
