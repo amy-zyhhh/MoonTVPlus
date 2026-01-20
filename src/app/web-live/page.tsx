@@ -131,6 +131,13 @@ export default function WebLivePage() {
     }
   };
 
+  const getRoomUrl = (source: any) => {
+    if (source.platform === 'huya') {
+      return `https://huya.com/${source.roomId}`;
+    }
+    return '';
+  };
+
   const platforms = Array.from(new Set(sources.map(s => s.platform)));
 
   if (loading) {
@@ -273,6 +280,180 @@ export default function WebLivePage() {
                   </div>
                 )}
               </div>
+
+              {/* 外部播放器按钮 */}
+              {currentSource && (
+                <div className='mt-3 px-2 lg:flex-shrink-0 flex justify-end'>
+                  <div className='bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-2 border border-gray-200/50 dark:border-gray-700/50 w-full lg:w-auto overflow-x-auto'>
+                    <div className='flex gap-1.5 justify-end lg:flex-wrap items-center'>
+                      {/* 网页播放 */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const roomUrl = getRoomUrl(currentSource);
+                          if (roomUrl) {
+                            window.open(roomUrl, '_blank');
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='网页播放'
+                      >
+                        <svg
+                          className='w-4 h-4 flex-shrink-0 text-gray-700 dark:text-gray-200'
+                          fill='none'
+                          stroke='currentColor'
+                          viewBox='0 0 24 24'
+                          xmlns='http://www.w3.org/2000/svg'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25'
+                          />
+                        </svg>
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          网页播放
+                        </span>
+                      </button>
+
+                      {/* PotPlayer */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(`potplayer://${videoUrl}`, '_blank');
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='PotPlayer'
+                      >
+                        <img
+                          src='/players/potplayer.png'
+                          alt='PotPlayer'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          PotPlayer
+                        </span>
+                      </button>
+
+                      {/* VLC */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(`vlc://${videoUrl}`, '_blank');
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='VLC'
+                      >
+                        <img
+                          src='/players/vlc.png'
+                          alt='VLC'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          VLC
+                        </span>
+                      </button>
+
+                      {/* MPV */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(`mpv://${videoUrl}`, '_blank');
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='MPV'
+                      >
+                        <img
+                          src='/players/mpv.png'
+                          alt='MPV'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          MPV
+                        </span>
+                      </button>
+
+                      {/* MX Player */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(
+                              `intent://${videoUrl}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(
+                                currentSource?.name || '直播'
+                              )};end`,
+                              '_blank'
+                            );
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='MX Player'
+                      >
+                        <img
+                          src='/players/mxplayer.png'
+                          alt='MX Player'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          MX Player
+                        </span>
+                      </button>
+
+                      {/* nPlayer */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(`nplayer-${videoUrl}`, '_blank');
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='nPlayer'
+                      >
+                        <img
+                          src='/players/nplayer.png'
+                          alt='nPlayer'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          nPlayer
+                        </span>
+                      </button>
+
+                      {/* IINA */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (videoUrl) {
+                            window.open(
+                              `iina://weblink?url=${encodeURIComponent(videoUrl)}`,
+                              '_blank'
+                            );
+                          }
+                        }}
+                        className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600 flex-shrink-0'
+                        title='IINA'
+                      >
+                        <img
+                          src='/players/iina.png'
+                          alt='IINA'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          IINA
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className={`h-[300px] lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${isChannelListCollapsed ? 'md:col-span-1 lg:hidden lg:opacity-0 lg:scale-95' : 'md:col-span-1 lg:opacity-100 lg:scale-100'}`}>
@@ -332,8 +513,12 @@ export default function WebLivePage() {
                       {platforms.length > 0 ? (
                         platforms.map((platform) => (
                           <div key={platform} className='flex items-start gap-3 px-2 py-3 rounded-lg bg-gray-200/50 dark:bg-white/10'>
-                            <div className='w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0'>
-                              <Radio className='w-6 h-6 text-gray-500' />
+                            <div className='w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                              {platform === 'huya' ? (
+                                <img src='https://hd.huya.com/favicon.ico' alt='虎牙' className='w-8 h-8' />
+                              ) : (
+                                <Radio className='w-6 h-6 text-gray-500' />
+                              )}
                             </div>
                             <div className='flex-1 min-w-0'>
                               <div className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>

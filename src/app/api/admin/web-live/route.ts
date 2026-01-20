@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         }
         const sortedSources = keys
           .map((key) => config.WebLiveConfig!.find((s) => s.key === key))
-          .filter((s) => s !== undefined);
+          .filter((s): s is NonNullable<typeof s> => s !== undefined);
         config.WebLiveConfig = sortedSources;
         break;
       }
